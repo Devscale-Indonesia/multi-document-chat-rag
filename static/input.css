@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer base {
+    body {
+        @apply bg-zinc-900 text-zinc-500
+    }
+    h1 {
+        @apply text-4xl font-medium tracking-tight text-zinc-200
+    }
+    h2 {
+        @apply text-2xl font-medium tracking-tight text-zinc-200
+    }
+    h3 {
+        @apply text-xl font-medium tracking-tight text-zinc-200
+    }
+    input {
+        @apply block w-full px-4 py-2 rounded-md border border-zinc-500 shadow-2xl shadow-zinc-950
+    }
+    button {
+        @apply block px-4 py-2 rounded-md bg-orange-600 text-zinc-50
+    }
+}
+
+@layer components {
+    .container {
+        @apply max-w-md mx-auto py-12
+    }
+}

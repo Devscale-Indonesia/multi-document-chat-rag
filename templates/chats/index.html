@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="space-y-6">
+
+    <h1>Chat with Document</h1>
+    <div class="space-y-2">
+        <input id="chat-message-input" type="text" size="100" autofocus autocomplete="off"
+               placeholder="Enter message..."/>
+        <button id="chat-message-submit">Send</button>
+    </div>
+
+    <div id="chats" class="space-y-4 text-zinc-400">
+        {% for chat in conversation %}
+        <div>{{ chat.role }}: {{ chat.message }}</div>
+        {% endfor %}
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const ws = new WebSocket(`${ws_scheme}://${window.location.host}/ws/chat/{{document_id}}/`);
+
+    document.getElementById('chat-message-submit').onclick = function (e) {
+        const inputDom = document.getElementById('chat-message-input');
+        const message = inputDom.value;
+        if (message.trim() === '') return;
+
+        ws.send(JSON.stringify({
+            'message': message
+        }));
+        inputDom.value = '';
+        const notifContainer = document.getElementById("chats");
+
+        const newUserChat = document.createElement("div");
+        newUserChat.innerHTML = marked.parse(message)
+        notifContainer.append(newUserChat);
+    };
+
+    ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        const notifContainer = document.getElementById("chats");
+        const newAssistantChat = document.createElement("div");
+        newAssistantChat.innerHTML = marked.parse(data.message);
+        notifContainer.append(newAssistantChat);
+    };
+
+    ws.onopen = () => {
+        console.log("Connected");
+    };
+
+    ws.onclose = () => {
+        console.log("Disconnected");
+    };
+</script>
+{% endblock %}
